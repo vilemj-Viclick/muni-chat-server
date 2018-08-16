@@ -11,7 +11,7 @@ function isString(arg) {
   return typeof arg === 'string';
 }
 
-const originWhitelist = [/https?:\/\/localhost[:/].*/];
+const originWhitelist = [/https?:\/\/localhost(:[0-9]+)?[/]?/];
 
 try {
   express()
@@ -19,7 +19,7 @@ try {
     .use(bodyParser.json())
     .use(cors({
       origin: (origin, callback) => {
-        if (originWhitelist.some(originRegex => origin.test(originRegex))) {
+        if (originWhitelist.some(originRegex => originRegex.test(origin))) {
           callback(null, true);
         }
         else {
