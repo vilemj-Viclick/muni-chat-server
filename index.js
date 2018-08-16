@@ -23,7 +23,6 @@ try {
         console.log(req.body);
         const message = req.body;
         if (isString(message.text) && isString(message.nick)) {
-          console.log(message);
           messages.push({
             ...message,
             id: uuid(),
