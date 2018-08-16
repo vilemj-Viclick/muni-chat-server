@@ -2,6 +2,7 @@ const express = require('express');
 const uuid = require('uuid/v4');
 const path = require('path');
 const bodyParser = require('body-parser');
+const cors = require('cors');
 const PORT = process.env.PORT || 5000;
 
 let messages = [];
@@ -10,10 +11,23 @@ function isString(arg) {
   return typeof arg === 'string';
 }
 
+const originWhitelist = [/https?:\/\/localhost[:/].*/];
+
 try {
   express()
     .use(express.static(path.join(__dirname, 'public')))
     .use(bodyParser.json())
+    .use(cors({
+      origin: (origin, callback) => {
+        if (originWhitelist.some(originRegex => origin.test(originRegex))) {
+          callback(null, true);
+        }
+        else {
+          console.log(`Origin '${origin}' not allowed by CORS.`);
+          callback(new Error(`Origin '${origin}' not allowed by CORS.`));
+        }
+      }
+    }))
     .set('views', path.join(__dirname, 'views'))
     .set('view engine', 'ejs')
     .get('/', (req, res) => res.render('pages/index'))
