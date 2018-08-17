@@ -12,6 +12,7 @@ function isString(arg) {
 }
 
 const originWhitelist = [/https?:\/\/localhost(:[0-9]+)?[/]?/];
+const deletePass = process.env.DeletePassword || 'please';
 
 try {
   express()
@@ -33,7 +34,7 @@ try {
     .get('/', (req, res) => res.render('pages/index'))
     .get('/messages', (req, res) => res.send(JSON.stringify(messages, null, 4)))
     .delete('/messages', (req, res) => {
-      if(req.header('X-Pass') === 'please') {
+      if(req.header('X-Pass') === deletePass) {
         res.send(JSON.stringify({message: 'Aye aye captain!'}));
         messages = [];
       }
