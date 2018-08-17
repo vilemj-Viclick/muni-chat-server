@@ -19,7 +19,7 @@ try {
     .use(bodyParser.json())
     .use(cors({
       origin: (origin, callback) => {
-        if (originWhitelist.some(originRegex => originRegex.test(origin))) {
+        if (!origin || originWhitelist.some(originRegex => originRegex.test(origin))) {
           callback(null, true);
         }
         else {
@@ -32,6 +32,15 @@ try {
     .set('view engine', 'ejs')
     .get('/', (req, res) => res.render('pages/index'))
     .get('/messages', (req, res) => res.send(JSON.stringify(messages, null, 4)))
+    .delete('/messages', (req, res) => {
+      if(req.header('X-Pass') === 'please') {
+        res.send(JSON.stringify({message: 'Aye aye captain!'}));
+        messages = [];
+      }
+      else {
+        res.send(JSON.stringify({message: 'Close but no cigar!'}));
+      }
+    })
     .post('/message', (req, res) => {
       try {
         console.log(req.body);
